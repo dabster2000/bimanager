@@ -6,6 +6,8 @@ import dk.trustworks.bimanager.dto.TaskWorkerConstraintBudget;
 import dk.trustworks.bimanager.persistence.TaskBudgetRepository;
 import dk.trustworks.framework.persistence.GenericRepository;
 import dk.trustworks.framework.service.DefaultLocalService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.SQLException;
 import java.util.Deque;
@@ -17,11 +19,14 @@ import java.util.Map;
  */
 public class TaskBudgetService extends DefaultLocalService {
 
+    private static final Logger log = LogManager.getLogger(TaskBudgetService.class);
     private TaskBudgetRepository taskBudgetRepository;
 
     public TaskBudgetService() { taskBudgetRepository = new TaskBudgetRepository(); }
 
     public Map<String, Object> findByTaskUUIDAndUserUUID(Map<String, Deque<String>> queryParameters) {
+        log.debug("TaskBudgetService.findByTaskUUIDAndUserUUID");
+        log.debug("queryParameters = [" + queryParameters + "]");
         String taskUUID = queryParameters.get("taskuuid").getFirst();
         String userUUID = queryParameters.get("useruuid").getFirst();
         RestClient restClient = new RestClient();

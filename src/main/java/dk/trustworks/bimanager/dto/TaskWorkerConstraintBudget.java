@@ -20,15 +20,18 @@ public class TaskWorkerConstraintBudget {
     @JsonProperty("taskworkerconstraintuuid")
     private String taskWorkerConstraintUUID;
 
+    @JsonProperty("taskworkerconstraint")
+    private TaskWorkerConstraint taskWorkerConstraint;
+
     public TaskWorkerConstraintBudget() {
     }
 
-    public TaskWorkerConstraintBudget(String uuid, double budget, int month, int year, String taskWorkerConstraintUUID, int version) {
-        this.uuid = uuid;
+    public TaskWorkerConstraintBudget(double budget, Integer month, String taskWorkerConstraintUUID, String uuid, Integer year) {
         this.budget = budget;
         this.month = month;
-        this.year = year;
         this.taskWorkerConstraintUUID = taskWorkerConstraintUUID;
+        this.uuid = uuid;
+        this.year = year;
     }
 
     public String getUuid() {
@@ -81,5 +84,13 @@ public class TaskWorkerConstraintBudget {
                 ", year=" + year +
                 ", taskWorkerConstraintUUID='" + taskWorkerConstraintUUID + '\'' +
                 '}';
+    }
+
+    public TaskWorkerConstraint getTaskWorkerConstraint() {
+        return taskWorkerConstraint;
+    }
+
+    public void setTaskWorkerConstraint(TaskWorkerConstraint taskWorkerConstraint) {
+        this.taskWorkerConstraint = taskWorkerConstraint;
     }
 }

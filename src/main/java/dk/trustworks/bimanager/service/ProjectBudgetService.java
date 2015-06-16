@@ -6,6 +6,8 @@ import dk.trustworks.bimanager.dto.*;
 import dk.trustworks.bimanager.persistence.TaskBudgetRepository;
 import dk.trustworks.framework.persistence.GenericRepository;
 import dk.trustworks.framework.service.DefaultLocalService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.SQLException;
 import java.time.Instant;
@@ -18,13 +20,14 @@ import java.util.stream.StreamSupport;
  */
 public class ProjectBudgetService extends DefaultLocalService {
 
+    private static final Logger log = LogManager.getLogger(ProjectBudgetService.class);
     private TaskBudgetRepository taskBudgetRepository;
 
     public ProjectBudgetService() { taskBudgetRepository = new TaskBudgetRepository(); }
 
     public Map<String, Object> findByProjectUUID(Map<String, Deque<String>> queryParameters) {
-        System.out.println("ProjectBudgetService.findByProjectUUID");
-        System.out.println("queryParameters = [" + queryParameters + "]");
+        log.debug("ProjectBudgetService.findByProjectUUID");
+        log.debug("queryParameters = [" + queryParameters + "]");
         String projectUUID = queryParameters.get("projectuuid").getFirst();
         RestClient restClient = new RestClient();
         Project project = restClient.getProjectByUUID(projectUUID);
@@ -44,9 +47,10 @@ public class ProjectBudgetService extends DefaultLocalService {
     }
 
     public List<ProjectYearEconomy> findByYear(Map<String, Deque<String>> queryParameters) {
-        System.out.println("ProjectBudgetService.findBy");
-        System.out.println("queryParameters = [" + queryParameters + "]");
+        log.debug("ProjectBudgetService.findByYear");
+        log.debug("queryParameters = [" + queryParameters + "]");
         int year = Integer.parseInt(queryParameters.get("year").getFirst());
+        log.debug("year = " + year);
         RestClient restClient = new RestClient();
         List<ProjectYearEconomy> projectYearBudgets = new ArrayList<ProjectYearEconomy>();
 

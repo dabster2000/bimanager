@@ -4,7 +4,6 @@ import dk.trustworks.bimanager.handler.ProjectBudgetHandler;
 import dk.trustworks.bimanager.handler.ReportHandler;
 import dk.trustworks.bimanager.handler.TaskBudgetHandler;
 import dk.trustworks.framework.persistence.Helper;
-import dk.trustworks.framework.service.ServiceRegistry;
 import io.undertow.Handlers;
 import io.undertow.Undertow;
 import io.undertow.UndertowOptions;
@@ -37,14 +36,6 @@ public class BiApplication {
             properties.load(in);
         }
 
-        ServiceRegistry serviceRegistry = ServiceRegistry.getInstance();
-/*
-        serviceRegistry.registerService("taskuuid", new TaskService());
-        serviceRegistry.registerService("projectuuid", new ProjectService());
-        serviceRegistry.registerService("clientuuid", new ClientService());
-        serviceRegistry.registerService("taskworkerconstraintuuid", new TaskWorkerConstraintService());
-        serviceRegistry.registerService("useruuid", new UserService());
-*/
         Undertow.builder()
                 .addHttpListener(port, properties.getProperty("web.host"))
                 .setBufferSize(1024 * 16)
@@ -56,14 +47,6 @@ public class BiApplication {
                         .addPrefixPath("/api/projectbudgets", new ProjectBudgetHandler())
                         .addPrefixPath("/api/taskbudgets", new TaskBudgetHandler())
                         .addPrefixPath("/api/reports", new ReportHandler())
-                        /*
-                        .addPrefixPath("/api/clients", new ClientHandler(objectMapper))
-                        .addPrefixPath("/api/clientdatas", new ClientDataHandler(objectMapper))
-                        .addPrefixPath("/api/projects", new ProjectHandler(objectMapper))
-                        .addPrefixPath("/api/tasks", new TaskHandler(objectMapper))
-                        .addPrefixPath("/api/taskworkerconstraints", new TaskWorkerConstraintHandler(objectMapper))
-                        .addPrefixPath("/api/taskworkerconstraintbudgets", new TaskWorkerConstraintBudgetHandler(objectMapper))
-                        */
                         , Headers.SERVER_STRING, "U-tow"))
                         .setWorkerThreads(200)
                         .build()
