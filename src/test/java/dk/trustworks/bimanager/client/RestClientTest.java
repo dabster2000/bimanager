@@ -1,19 +1,10 @@
 package dk.trustworks.bimanager.client;
 
-import dk.trustworks.bimanager.dto.Work;
-import org.junit.Before;
-import org.junit.Test;
-
-import java.util.List;
-import java.util.Map;
-
-import static org.junit.Assert.assertTrue;
-
 /**
  * Created by hans on 19/05/15.
  */
 public class RestClientTest {
-
+/*
     RestClient restClient;
 
     @Before
@@ -53,5 +44,5 @@ public class RestClientTest {
     public void getTaskProjectClient() throws Exception {
         Map<String, String> taskProjectClient = restClient.getTaskProjectClient("217e5c68-eb72-40b6-a3d2-099c34f89405");
         System.out.println("taskProjectClient = " + taskProjectClient);
-    }
+    }*/
 }
