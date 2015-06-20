@@ -15,10 +15,10 @@
         <Logger name="org.jboss.logging" level="info">
             <AppenderRef ref="MyFile"/>
         </Logger>
-        <Logger name="dk.trustworks" level="trace" additivity="false">
+        <Logger name="dk.trustworks" level="info" additivity="false">
             <AppenderRef ref="MyFile"/>
         </Logger>
-        <Root level="trace">
+        <Root level="info">
             <AppenderRef ref="MyFile"/>
         </Root>
     </Loggers>

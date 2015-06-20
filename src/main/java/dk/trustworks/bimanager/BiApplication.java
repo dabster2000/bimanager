@@ -29,7 +29,7 @@ public class BiApplication {
     }
 
     public BiApplication(int port) throws Exception {
-        System.out.println("ClientManager on port " + port);
+        System.out.println("BiManager on port " + port);
         Class.forName("org.mariadb.jdbc.Driver");
         Properties properties = new Properties();
         try (InputStream in = Helper.class.getResourceAsStream("server.properties")) {
