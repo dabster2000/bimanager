@@ -47,7 +47,7 @@ public class TaskBudgetService extends DefaultLocalService {
 
     @Override
     public GenericRepository getGenericRepository() {
-        return taskBudgetRepository;
+        return null; // taskBudgetRepository;
     }
 
     @Override
