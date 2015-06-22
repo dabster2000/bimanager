@@ -1,15 +1,26 @@
 package dk.trustworks.bimanager.dto;
 
+import java.util.Arrays;
+
 public class ProjectYearEconomy {
 
 	private String projectUUID;
 	private String projectName;
 	private double[] amount = new double[12];
+    private double[] actual = new double[12];
+
+    public double[] getActual() {
+        return actual;
+    }
+
+    public void setActual(double[] actual) {
+        this.actual = actual;
+    }
 
 	public ProjectYearEconomy() {
 	}
 
-	public ProjectYearEconomy(String projectName, String projectUUID) {
+	public ProjectYearEconomy(String projectUUID, String projectName) {
 		this.projectName = projectName;
 		this.projectUUID = projectUUID;
 	}
@@ -42,5 +53,15 @@ public class ProjectYearEconomy {
 
     public void setProjectUUID(String projectUUID) {
         this.projectUUID = projectUUID;
+    }
+
+    @Override
+    public String toString() {
+        return "ProjectYearEconomy{" +
+                "actual=" + Arrays.toString(actual) +
+                ", projectUUID='" + projectUUID + '\'' +
+                ", projectName='" + projectName + '\'' +
+                ", amount=" + Arrays.toString(amount) +
+                '}';
     }
 }

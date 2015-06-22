@@ -36,7 +36,6 @@ public class TaskBudgetService extends DefaultLocalService {
         for (TaskWorkerConstraintBudget taskWorkerConstraintBudget : restClient.getBudgetsByTaskWorkerConstraintUUID(restClient.getTaskWorkerConstraint(taskUUID, userUUID))) {
             taskWorkerBudget += taskWorkerConstraintBudget.getBudget();
         }
-        //double projectBudget = restClient.getProjectBudgetByTask(taskUUID);
         HashMap<String, Object> result = new HashMap<>();
         result.put("workhours", taskUserWorkHours);
         result.put("rate", workerRate);

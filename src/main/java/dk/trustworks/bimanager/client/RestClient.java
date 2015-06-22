@@ -92,6 +92,24 @@ public class RestClient {
         return new ArrayList<>();
     }
 
+    public List<Work> getRegisteredWorkByYear(int year) {
+        log.entry(year);
+        try {
+            HttpResponse<JsonNode> jsonResponse = Unirest.get(Locator.getInstance().resolveURL("timeservice") + "/api/works/search/findByYear")
+                    .queryString("year", year)
+                    .header("accept", "application/json")
+                    .asJson();
+            ObjectMapper mapper = new ObjectMapper();
+            List<Work> result = mapper.readValue(jsonResponse.getRawBody(), new TypeReference<List<Work>>() {});
+            log.exit(result);
+            return result;
+        } catch (UnirestException | IOException e) {
+            log.catching(e);
+        }
+        log.exit(new ArrayList<>());
+        return new ArrayList<>();
+    }
+
     public TaskWorkerConstraint getTaskWorkerConstraint(String taskUUID, String userUUID) {
         log.entry(taskUUID, userUUID);
         try {
