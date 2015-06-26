@@ -19,12 +19,10 @@ public class ReportService extends DefaultLocalService {
 
     private final RestClient restClient;
     private final UserService userService;
-    private final TaskService taskService;
 
     public ReportService() {
         restClient = new RestClient();
         userService = new UserService();
-        taskService = new TaskService();
     }
 
     public ArrayList<ReportDTO> findByTaskUUIDAndUserUUID(Map<String, Deque<String>> queryParameters) {
@@ -66,41 +64,7 @@ public class ReportService extends DefaultLocalService {
             reportDTO.setSum(reportDTO.getHours() * reportDTO.getRate());
         }
 
-
-
-        /*
-        for (Work work : workRepository.findByYearAndMonth(year, month)) {
-            ReportDTO reportDTO = null;
-            for (ReportDTO newReportDTO : reportDTOs) {
-                if(newReportDTO.getTaskUUID().equals(work.getTaskUUID()) && newReportDTO.getWorkerUUID().equals(work.getUserUUID())) {
-                    reportDTO = newReportDTO;
-                }
-            }
-            if(reportDTO == null) {
-                reportDTO = new ReportDTO();
-                if(work.getWorkDuration() > 0) reportDTOs.add(reportDTO);
-                reportDTO.setWorkerName(userRepository.findOne(work.getUserUUID()).getFirstname() + " " + userRepository.findOne(work.getUserUUID()).getLastname());
-                reportDTO.setWorkerUUID(work.getUserUUID());
-                Task task = taskRepository.findOne(work.getTaskUUID());
-                Project project = projectRepository.findOne(task.getProjectUUID());
-                Client client = clientRepository.findOne(project.getClientUUID());
-                reportDTO.setClientName(client.getName());
-                reportDTO.setProjectName(project.getName());
-                reportDTO.setTaskName(task.getName());
-                reportDTO.setTaskUUID(work.getTaskUUID());
-            }
-
-            reportDTO.setHours(reportDTO.getHours() + work.getWorkDuration());
-
-            for (TaskWorkerConstraint taskWorkerConstraint : taskWorkerConstraintRepository.findByTaskUUIDAndUserUUID(work.getTaskUUID(), work.getUserUUID())) {
-                reportDTO.setRate(taskWorkerConstraint.getPrice());
-                reportDTO.setSum(reportDTO.getHours() * reportDTO.getRate());
-            }
-        }
-*/
         return reportDTOs;
-
-        //return null;
     }
 
     @Override
