@@ -14,6 +14,8 @@ import org.apache.curator.retry.RetryNTimes;
 import org.apache.curator.x.discovery.ServiceDiscoveryBuilder;
 import org.apache.curator.x.discovery.ServiceInstance;
 import org.apache.curator.x.discovery.UriSpec;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.xnio.Options;
 
 import java.io.InputStream;
@@ -24,13 +26,14 @@ import java.util.Properties;
  */
 public class BiApplication {
 
+    private static final Logger log = LogManager.getLogger(BiApplication.class);
+
     public static void main(String[] args) throws Exception {
         new BiApplication(Integer.parseInt(args[0]));
     }
 
     public BiApplication(int port) throws Exception {
-        System.out.println("BiManager on port " + port);
-        Class.forName("org.mariadb.jdbc.Driver");
+        log.info("LOG00800: BiManager on port " + port);
         Properties properties = new Properties();
         try (InputStream in = Helper.class.getResourceAsStream("server.properties")) {
             properties.load(in);

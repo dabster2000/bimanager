@@ -73,10 +73,10 @@ public class ProjectBudgetService extends DefaultLocalService {
                                 log.debug("taskWorkerConstraint = " + taskWorkerConstraint);
                                 log.debug("specifiedTime = " + calendar);
                                 log.debug("budgets.size() = " + budgets.size());
-                                budgetSummary.getAmount()[month] += (work.getWorkDuration() * taskWorkerConstraint.getPrice());
+                                budgetSummary.getActual()[month] += (work.getWorkDuration() * taskWorkerConstraint.getPrice());
                             }
                         }
-
+                        log.debug("budgets.size() = " + budgets.size());
                         if (budgets.size() > 0) budgetSummary.getAmount()[month] += budgets.get(0).getBudget();
                     }
                 }
