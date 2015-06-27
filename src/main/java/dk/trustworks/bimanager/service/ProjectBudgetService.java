@@ -63,7 +63,8 @@ public class ProjectBudgetService extends DefaultLocalService {
                     for (TaskWorkerConstraint taskWorkerConstraint : restClient.getTaskWorkerConstraint(task.getUUID())) {
                         Calendar calendar = Calendar.getInstance();
                         calendar.set(year, month, 1, 0, 0);
-                        if(year < 2016 && month < 7) calendar = Calendar.getInstance();
+                        if(year < 2016 && month < 6) calendar = Calendar.getInstance();
+                        if(year >= Calendar.getInstance().get(Calendar.YEAR) && month > Calendar.getInstance().get(Calendar.MONTH))  calendar = Calendar.getInstance();
                         long specifiedTime = calendar.toInstant().toEpochMilli();
                         List<TaskWorkerConstraintBudget> budgets = restClient.getBudgetsByTaskWorkerConstraintUUIDAndMonthAndYearAndDate(taskWorkerConstraint, month, year, specifiedTime);
                         for (Work work : allWork) {
