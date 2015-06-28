@@ -48,14 +48,12 @@ public class ProjectBudgetService extends DefaultLocalService {
         log.debug("ProjectBudgetService.findByYear");
         log.debug("queryParameters = [" + queryParameters + "]");
         int year = Integer.parseInt(queryParameters.get("year").getFirst());
-        log.debug("year = " + year);
         RestClient restClient = new RestClient();
 
         List<ProjectYearEconomy> projectYearBudgets = new ArrayList<>();
         List<Work> allWork = restClient.getRegisteredWorkByYear(year);
 
         StreamSupport.stream(restClient.getProjects().spliterator(), true).map((project) -> {
-            log.trace("Stream: "+project.getName());
             ProjectYearEconomy budgetSummary = new ProjectYearEconomy(project.getUUID(), project.getName());
             List<Task> tasks = restClient.getAllProjectTasks(project.getUUID());
             for (int month = 0; month < 12; month++) {
@@ -71,19 +69,13 @@ public class ProjectBudgetService extends DefaultLocalService {
                             if(work.getTaskUUID().equals(taskWorkerConstraint.getTaskUUID()) &&
                                     work.getUserUUID().equals(taskWorkerConstraint.getUserUUID()) &&
                                     work.getMonth() == month) {
-                                log.trace("month: "+month);
-                                log.debug("taskWorkerConstraint = " + taskWorkerConstraint);
-                                log.debug("specifiedTime = " + calendar);
-                                log.debug("budgets.size() = " + budgets.size());
                                 budgetSummary.getActual()[month] += (work.getWorkDuration() * taskWorkerConstraint.getPrice());
                             }
                         }
-                        log.debug("budgets.size() = " + budgets.size());
                         if (budgets.size() > 0) budgetSummary.getAmount()[month] += budgets.get(0).getBudget();
                     }
                 }
             }
-            System.out.println("budgetSummary = " + budgetSummary);
             return budgetSummary;
 
         }).forEach(result -> projectYearBudgets.add(result));
