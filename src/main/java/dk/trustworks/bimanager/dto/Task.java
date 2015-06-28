@@ -2,6 +2,9 @@ package dk.trustworks.bimanager.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Task {
 
     @JsonProperty("uuid")
@@ -16,6 +19,9 @@ public class Task {
 
     private Project project;
 
+    @JsonProperty("taskworkerconstraints")
+    private List<TaskWorkerConstraint> taskWorkerConstraints = new ArrayList<>();
+
     public Project getProject() {
         return project;
     }
@@ -27,11 +33,13 @@ public class Task {
     public Task() {
     }
 
-    public Task(String UUID, String name, String projectUUID, String type) {
-        this.UUID = UUID;
+    public Task(String name, Project project, String projectUUID, List<TaskWorkerConstraint> taskWorkerConstraints, String type, String UUID) {
         this.name = name;
+        this.project = project;
         this.projectUUID = projectUUID;
+        this.taskWorkerConstraints = taskWorkerConstraints;
         this.type = type;
+        this.UUID = UUID;
     }
 
     public String getUUID() {
@@ -66,13 +74,23 @@ public class Task {
         this.type = type;
     }
 
+    public List<TaskWorkerConstraint> getTaskWorkerConstraints() {
+        return taskWorkerConstraints;
+    }
+
+    public void setTaskWorkerConstraints(List<TaskWorkerConstraint> taskWorkerConstraints) {
+        this.taskWorkerConstraints = taskWorkerConstraints;
+    }
+
     @Override
     public String toString() {
         return "Task{" +
-                "UUID='" + UUID + '\'' +
-                ", name='" + name + '\'' +
+                "name='" + name + '\'' +
+                ", UUID='" + UUID + '\'' +
                 ", projectUUID='" + projectUUID + '\'' +
                 ", type='" + type + '\'' +
+                ", project=" + project +
+                ", taskWorkerConstraints=" + taskWorkerConstraints +
                 '}';
     }
 }

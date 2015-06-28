@@ -82,7 +82,8 @@ public class RestClient {
                     .header("accept", "application/json")
                     .asJson();
             ObjectMapper mapper = new ObjectMapper();
-            List<Work> result = mapper.readValue(jsonResponse.getRawBody(), new TypeReference<List<Work>>() {});
+            List<Work> result = mapper.readValue(jsonResponse.getRawBody(), new TypeReference<List<Work>>() {
+            });
             log.exit(result);
             return result;
         } catch (UnirestException | IOException e) {
@@ -279,6 +280,21 @@ public class RestClient {
         try {
             HttpResponse<JsonNode> jsonResponse;
             jsonResponse = Unirest.get(Locator.getInstance().resolveURL("clientservice") + "/api/projects")
+                    .header("accept", "application/json")
+                    .asJson();
+            ObjectMapper mapper = new ObjectMapper();
+            return mapper.readValue(jsonResponse.getRawBody(), new TypeReference<List<Project>>() {});
+        } catch (Exception e) {
+            log.throwing(e);
+            throw new RuntimeException("Kunne ikke loade: projects ", e);
+        }
+    }
+
+    public List<Project> getProjectsAndTasksAndTaskWorkerConstraints() {
+        log.debug("RestClient.getProjects");
+        try {
+            HttpResponse<JsonNode> jsonResponse = Unirest.get(Locator.getInstance().resolveURL("clientservice") + "/api/projects")
+                    .queryString("children", "taskuuid/taskworkerconstraintuuid")
                     .header("accept", "application/json")
                     .asJson();
             ObjectMapper mapper = new ObjectMapper();

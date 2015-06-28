@@ -60,7 +60,7 @@ public class ProjectBudgetService extends DefaultLocalService {
             List<ProjectYearEconomy> projectYearBudgets = new ArrayList<>();
             long allWorkTimer = System.currentTimeMillis();
             List<Work> allWork = restClient.getRegisteredWorkByYear(year);
-            log.info("Load all work: {}", (System.currentTimeMillis() - allWorkTimer));
+            log.debug("Load all work: {}", (System.currentTimeMillis() - allWorkTimer));
 
             Map<String, Map<String, Map<Integer, List<Work>>>> orderedWork = new HashMap();
 
@@ -73,38 +73,33 @@ public class ProjectBudgetService extends DefaultLocalService {
                     orderedWork.get(work.getUserUUID()).get(work.getTaskUUID()).put(work.getMonth(), new ArrayList<>());
                 orderedWork.get(work.getUserUUID()).get(work.getTaskUUID()).get(work.getMonth()).add(work);
             }
-            log.info("Ordering: {}", (System.currentTimeMillis()-timer));
+            log.debug("Ordering: {}", (System.currentTimeMillis() - timer));
 
+            timer = System.currentTimeMillis();
+            List<Project> projectsAndTasksAndTaskWorkerConstraints = restClient.getProjectsAndTasksAndTaskWorkerConstraints();
+            log.debug("projectsAndTasksAndTaskWorkerConstraints: {}", (System.currentTimeMillis() - timer));
 
-            StreamSupport.stream(restClient.getProjects().spliterator(), true).map((project) -> {
+            StreamSupport.stream(projectsAndTasksAndTaskWorkerConstraints.spliterator(), true).map((project) -> {
 
                 ProjectYearEconomy budgetSummary = new ProjectYearEconomy(project.getUUID(), project.getName());
-                List<Task> tasks = restClient.getAllProjectTasks(project.getUUID());
+                List<Task> tasks = project.getTasks();//restClient.getAllProjectTasks(project.getUUID());
                 for (int month = 0; month < 12; month++) {
                     for (Task task : tasks) {
-                        for (TaskWorkerConstraint taskWorkerConstraint : restClient.getTaskWorkerConstraint(task.getUUID())) {
+                        for (TaskWorkerConstraint taskWorkerConstraint : task.getTaskWorkerConstraints()) { // restClient.getTaskWorkerConstraint(task.getUUID()
                             Calendar calendar = Calendar.getInstance();
                             calendar.set(year, month, 1, 0, 0);
                             if (year < 2016 && month < 6) calendar = Calendar.getInstance();
                             if (year >= Calendar.getInstance().get(Calendar.YEAR) && month > Calendar.getInstance().get(Calendar.MONTH))
                                 calendar = Calendar.getInstance();
                             long specifiedTime = calendar.toInstant().toEpochMilli();
-                            //long budgetsTimer = System.currentTimeMillis();
                             List<TaskWorkerConstraintBudget> budgets = restClient.getBudgetsByTaskWorkerConstraintUUIDAndMonthAndYearAndDate(taskWorkerConstraint, month, year, specifiedTime);
-                            //log.info("Pulling: {}", (System.currentTimeMillis() - budgetsTimer));
-                            //Collection<Work> filteredWork = Collections2.filter(allWork, taskUUIDEqualsTo(taskWorkerConstraint.getTaskUUID()));
                             List<Work> filteredWork = new ArrayList<Work>();
                             try {
                                 filteredWork.addAll(orderedWork.get(taskWorkerConstraint.getUserUUID()).get(taskWorkerConstraint.getTaskUUID()).get(month));
-                            } catch (Exception e) {}
-                            log.debug("size: ?", filteredWork.size());
+                            } catch (Exception e) {
+                            }
                             for (Work work : filteredWork) {
-                            /*
-                            if(work.getTaskUUID().equals(taskWorkerConstraint.getTaskUUID()) &&
-                                    work.getUserUUID().equals(taskWorkerConstraint.getUserUUID()) &&
-                                    work.getMonth() == month) {*/
                                 budgetSummary.getActual()[month] += (work.getWorkDuration() * taskWorkerConstraint.getPrice());
-                                //}
                             }
                             if (budgets.size() > 0) budgetSummary.getAmount()[month] += budgets.get(0).getBudget();
                         }
@@ -114,7 +109,7 @@ public class ProjectBudgetService extends DefaultLocalService {
                 return budgetSummary;
 
             }).forEach(result -> projectYearBudgets.add(result));
-            log.info("Load all: {}", (System.currentTimeMillis() - allTimer));
+            log.debug("Load all: {}", (System.currentTimeMillis() - allTimer));
             return projectYearBudgets;
         } catch (Exception e) {
             log.error("LOG00840:", e);

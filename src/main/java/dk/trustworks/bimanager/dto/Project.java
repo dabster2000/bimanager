@@ -7,7 +7,9 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 //@JsonIgnoreProperties(ignoreUnknown = true)
 public class Project {
@@ -45,6 +47,9 @@ public class Project {
     private String userOwnerUUID;
 	
 	private boolean active;
+
+    @JsonProperty("tasks")
+    private List<Task> tasks = new ArrayList<>();
 
     public Project() {
     }
@@ -148,6 +153,14 @@ public class Project {
 
     public void setUserOwnerUUID(String userOwnerUUID) {
         this.userOwnerUUID = userOwnerUUID;
+    }
+
+    public List<Task> getTasks() {
+        return tasks;
+    }
+
+    public void setTasks(List<Task> tasks) {
+        this.tasks = tasks;
     }
 
     @Override
