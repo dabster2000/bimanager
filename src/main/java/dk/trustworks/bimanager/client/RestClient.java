@@ -111,6 +111,25 @@ public class RestClient {
         return new ArrayList<>();
     }
 
+    public List<Work> getRegisteredWorkByUserAndYear(String userUUID, int year) {
+        log.entry(userUUID, year);
+        try {
+            HttpResponse<JsonNode> jsonResponse = Unirest.get(Locator.getInstance().resolveURL("timeservice") + "/api/works/search/findByYearAndUserUUID")
+                    .queryString("useruuid", userUUID)
+                    .queryString("year", year)
+                    .header("accept", "application/json")
+                    .asJson();
+            ObjectMapper mapper = new ObjectMapper();
+            List<Work> result = mapper.readValue(jsonResponse.getRawBody(), new TypeReference<List<Work>>() {});
+            log.exit(result);
+            return result;
+        } catch (UnirestException | IOException e) {
+            log.catching(e);
+        }
+        log.exit(new ArrayList<>());
+        return new ArrayList<>();
+    }
+
     public TaskWorkerConstraint getTaskWorkerConstraint(String taskUUID, String userUUID) {
         log.entry(taskUUID, userUUID);
         try {
@@ -210,6 +229,25 @@ public class RestClient {
         try {
             HttpResponse<JsonNode> jsonResponse;
             jsonResponse = Unirest.get(Locator.getInstance().resolveURL("clientservice") + "/api/projectbudgets/search/findByYear")
+                    .queryString("year", year)
+                    .header("accept", "application/json")
+                    .asJson();
+            ObjectMapper mapper = new ObjectMapper();
+            List<ProjectYearEconomy> projectBudgets = mapper.readValue(jsonResponse.getRawBody(), new TypeReference<List<ProjectYearEconomy>>() {});
+            return projectBudgets;
+        } catch (Exception e) {
+            log.throwing(e);
+            throw new RuntimeException("Kunne ikke loade: ProjectYearEconomy", e);
+        }
+    }
+
+    public List<ProjectYearEconomy> getProjectBudgetsByUserAndYear(String userUUID, int year) {
+        log.debug("RestClient.getProjectBudgetsByYear");
+        log.debug("userUUID = [" + userUUID + "], year = [" + year + "]");
+        try {
+            HttpResponse<JsonNode> jsonResponse;
+            jsonResponse = Unirest.get(Locator.getInstance().resolveURL("clientservice") + "/api/projectbudgets/search/findByUserAndYear")
+                    .queryString("useruuid", userUUID)
                     .queryString("year", year)
                     .header("accept", "application/json")
                     .asJson();
