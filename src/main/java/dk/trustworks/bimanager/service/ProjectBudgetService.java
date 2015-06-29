@@ -100,16 +100,33 @@ public class ProjectBudgetService extends DefaultLocalService {
         long allTimer = System.currentTimeMillis();
         int year = Integer.parseInt(queryParameters.get("year").getFirst());
         String userUUID = queryParameters.get("useruuid").getFirst();
+        List<ProjectYearEconomy> result = getProjectYearEconomies(allTimer, year, userUUID, true);
+        if (result != null) return result;
+        return null;
+    }
+
+    public List<ProjectYearEconomy> findByUserAndYearAndHours(Map<String, Deque<String>> queryParameters) {
+        log.debug("ProjectBudgetService.findByUserAndYearAndHours");
+        log.debug("queryParameters = [" + queryParameters + "]");
+        long allTimer = System.currentTimeMillis();
+        int year = Integer.parseInt(queryParameters.get("year").getFirst());
+        String userUUID = queryParameters.get("useruuid").getFirst();
+        List<ProjectYearEconomy> result = getProjectYearEconomies(allTimer, year, userUUID, false);
+        if (result != null) return result;
+        return null;
+    }
+
+    private List<ProjectYearEconomy> getProjectYearEconomies(long allTimer, int year, String userUUID, boolean useRate) {
         try {
             RestClient restClient = new RestClient();
             List<Project> projects = restClient.getProjectsAndTasksAndTaskWorkerConstraints();
 
             Map<String, ProjectYearEconomy> projectYearBudgetsMap = new HashMap<>();
-            for (ProjectYearEconomy projectYearEconomy : restClient.getProjectBudgetsByUserAndYear(userUUID, year)) {
+            List<ProjectYearEconomy> projectBudgetsByUserAndYear = (useRate)?restClient.getProjectBudgetsByUserAndYear(userUUID, year):restClient.getProjectBudgetsByUserAndYearAndHours(userUUID, year);
+            for (ProjectYearEconomy projectYearEconomy : projectBudgetsByUserAndYear) {
                 projectYearBudgetsMap.put(projectYearEconomy.getProjectUUID(), projectYearEconomy);
             }
             log.debug("size: "+projectYearBudgetsMap.values().size());
-
 
             long allWorkTimer = System.currentTimeMillis();
             List<Work> allWork = restClient.getRegisteredWorkByUserAndYear(userUUID, year);
@@ -123,10 +140,12 @@ public class ProjectBudgetService extends DefaultLocalService {
                             for (TaskWorkerConstraint taskWorkerConstraint : task.getTaskWorkerConstraints()) {
                                 if (work.getUserUUID().equals(taskWorkerConstraint.getUserUUID())) {
                                     if(projectYearBudgetsMap.containsKey(project.getUUID())) {
-                                        projectYearBudgetsMap.get(project.getUUID()).getActual()[work.getMonth()] += work.getWorkDuration() * taskWorkerConstraint.getPrice();
+                                        if(useRate) projectYearBudgetsMap.get(project.getUUID()).getActual()[work.getMonth()] += work.getWorkDuration() * taskWorkerConstraint.getPrice();
+                                        else projectYearBudgetsMap.get(project.getUUID()).getActual()[work.getMonth()] += work.getWorkDuration();
                                     } else {
                                         ProjectYearEconomy economy = projectYearBudgetsMap.put(project.getUUID(), new ProjectYearEconomy(project.getUUID(), project.getName()));
-                                        economy.getActual()[work.getMonth()] += work.getWorkDuration() * taskWorkerConstraint.getPrice();
+                                        if(useRate) economy.getActual()[work.getMonth()] += work.getWorkDuration() * taskWorkerConstraint.getPrice();
+                                        else economy.getActual()[work.getMonth()] += work.getWorkDuration();
                                     }
                                 }
                             }
