@@ -204,6 +204,24 @@ public class RestClient {
         }
     }
 
+    public List<ProjectYearEconomy> getProjectBudgetsByYear(int year) {
+        log.debug("RestClient.getProjectBudgetsByYear");
+        log.debug("year = [" + year + "]");
+        try {
+            HttpResponse<JsonNode> jsonResponse;
+            jsonResponse = Unirest.get(Locator.getInstance().resolveURL("clientservice") + "/api/projectbudgets/search/findByYear")
+                    .queryString("year", year)
+                    .header("accept", "application/json")
+                    .asJson();
+            ObjectMapper mapper = new ObjectMapper();
+            List<ProjectYearEconomy> projectBudgets = mapper.readValue(jsonResponse.getRawBody(), new TypeReference<List<ProjectYearEconomy>>() {});
+            return projectBudgets;
+        } catch (Exception e) {
+            log.throwing(e);
+            throw new RuntimeException("Kunne ikke loade: ProjectYearEconomy", e);
+        }
+    }
+
     public Map<String, String> getTaskProjectClient(String taskUUID) {
         log.debug("RestClient.getTaskProjectClient");
         log.debug("taskUUID = [" + taskUUID + "]");

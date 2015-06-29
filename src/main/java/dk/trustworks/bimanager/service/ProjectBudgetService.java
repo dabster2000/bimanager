@@ -1,10 +1,8 @@
 package dk.trustworks.bimanager.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.base.Predicate;
 import dk.trustworks.bimanager.client.RestClient;
 import dk.trustworks.bimanager.dto.*;
-import dk.trustworks.bimanager.persistence.TaskBudgetRepository;
 import dk.trustworks.framework.persistence.GenericRepository;
 import dk.trustworks.framework.service.DefaultLocalService;
 import org.apache.logging.log4j.LogManager;
@@ -12,7 +10,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.sql.SQLException;
 import java.util.*;
-import java.util.stream.StreamSupport;
 
 /**
  * Created by hans on 19/05/15.
@@ -20,9 +17,8 @@ import java.util.stream.StreamSupport;
 public class ProjectBudgetService extends DefaultLocalService {
 
     private static final Logger log = LogManager.getLogger(ProjectBudgetService.class);
-    private TaskBudgetRepository taskBudgetRepository;
 
-    public ProjectBudgetService() { taskBudgetRepository = new TaskBudgetRepository(); }
+    public ProjectBudgetService() {}
 
     public Map<String, Object> findByProjectUUID(Map<String, Deque<String>> queryParameters) {
         log.debug("ProjectBudgetService.findByProjectUUID");
@@ -45,10 +41,60 @@ public class ProjectBudgetService extends DefaultLocalService {
         return result;
     }
 
-    Predicate<Work> taskUUIDEqualsTo(final String taskUUID) {
-        return dataPoint -> dataPoint.getTaskUUID().equals(taskUUID);
+    public List<ProjectYearEconomy> findByYear(Map<String, Deque<String>> queryParameters) {
+        log.debug("ProjectBudgetService.findByYear");
+        log.debug("queryParameters = [" + queryParameters + "]");
+        long allTimer = System.currentTimeMillis();
+        int year = Integer.parseInt(queryParameters.get("year").getFirst());
+        try {
+            RestClient restClient = new RestClient();
+            List<Project> projects = restClient.getProjectsAndTasksAndTaskWorkerConstraints();
+
+            Map<String, ProjectYearEconomy> projectYearBudgetsMap = new HashMap<>();
+            for (ProjectYearEconomy projectYearEconomy : restClient.getProjectBudgetsByYear(year)) {
+                projectYearBudgetsMap.put(projectYearEconomy.getProjectUUID(), projectYearEconomy);
+            }
+            log.debug("size: "+projectYearBudgetsMap.values().size());
+
+
+            long allWorkTimer = System.currentTimeMillis();
+            List<Work> allWork = restClient.getRegisteredWorkByYear(year);
+            log.debug("Load all work: {}", (System.currentTimeMillis() - allWorkTimer));
+
+            for (Work work : allWork) {
+                for (Project project : projects) {
+                    for (Task task : project.getTasks()) {
+                        if (work.getTaskUUID().equals(task.getUUID())) {
+                            for (TaskWorkerConstraint taskWorkerConstraint : task.getTaskWorkerConstraints()) {
+                                if (work.getUserUUID().equals(taskWorkerConstraint.getUserUUID())) {
+                                    if(projectYearBudgetsMap.containsKey(project.getUUID())) {
+                                        log.debug("project: {}", project);
+                                        projectYearBudgetsMap.get(project.getUUID()).getActual()[work.getMonth()] += work.getWorkDuration() * taskWorkerConstraint.getPrice();
+                                        log.debug("budget: {}", projectYearBudgetsMap.get(project.getUUID()));
+                                    } else {
+                                        log.debug("new project: {}", project);
+                                        ProjectYearEconomy economy = projectYearBudgetsMap.put(project.getUUID(), new ProjectYearEconomy(project.getUUID(), project.getName()));
+                                        economy.getActual()[work.getMonth()] += work.getWorkDuration() * taskWorkerConstraint.getPrice();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            log.debug("Load all: {}", (System.currentTimeMillis() - allTimer));
+            log.debug("size: "+projectYearBudgetsMap.values().size());
+            ArrayList<ProjectYearEconomy> result = new ArrayList<>();
+            result.addAll(projectYearBudgetsMap.values());
+            return result;
+        } catch (Exception e) {
+            log.error("LOG00840:", e);
+        }
+        return null;
     }
 
+    /*
     public List<ProjectYearEconomy> findByYear(Map<String, Deque<String>> queryParameters) {
         log.debug("ProjectBudgetService.findByYear");
         log.debug("queryParameters = [" + queryParameters + "]");
@@ -116,6 +162,7 @@ public class ProjectBudgetService extends DefaultLocalService {
         }
         return null;
     }
+    */
 
     @Override
     public GenericRepository getGenericRepository() {

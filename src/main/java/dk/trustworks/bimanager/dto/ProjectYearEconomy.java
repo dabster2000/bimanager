@@ -1,10 +1,15 @@
 package dk.trustworks.bimanager.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.Arrays;
 
 public class ProjectYearEconomy {
 
+    @JsonProperty("projectuuid")
 	private String projectUUID;
+
+    @JsonProperty("projectname")
 	private String projectName;
 	private double[] amount = new double[12];
     private double[] actual = new double[12];
@@ -38,6 +43,7 @@ public class ProjectYearEconomy {
     public void setAmount(double[] amount) {
         this.amount = amount;
     }
+
 
     public String getProjectName() {
         return projectName;
