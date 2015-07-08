@@ -30,7 +30,7 @@ public class ReportService extends DefaultLocalService {
         System.out.println("queryParameters = [" + queryParameters + "]");
         ArrayList<ReportDTO> reportDTOs = new ArrayList<>();
 
-        for (Work work : restClient.getRegisteredWorkByMonth(Integer.parseInt(queryParameters.get("month").getFirst()), Integer.parseInt(queryParameters.get("year").getFirst()))) {
+        for (Work work : restClient.getRegisteredWorkByMonth(Integer.parseInt(queryParameters.get("year").getFirst()), Integer.parseInt(queryParameters.get("month").getFirst()))) {
 
             System.out.println("work = " + work);
             ReportDTO reportDTO = null;
