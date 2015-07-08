@@ -107,7 +107,7 @@ public class ProjectBudgetService extends DefaultLocalService {
             Map<String, ProjectYearEconomy> projectYearBudgetsMap = new HashMap<>();
 
             long allWorkTimer = System.currentTimeMillis();
-            List<Work> allWork = restClient.getRegisteredWorkByMonth(year, month - 2);
+            List<Work> allWork = restClient.getRegisteredWorkByMonth(year, month);
             log.debug("Load all work: {}", (System.currentTimeMillis() - allWorkTimer));
             log.debug("Work found: "+allWork.size());
 
@@ -123,8 +123,12 @@ public class ProjectBudgetService extends DefaultLocalService {
                                         log.debug("budget: {}", projectYearBudgetsMap.get(project.getUUID()));
                                     } else {
                                         log.debug("new project: {}", project);
-                                        ProjectYearEconomy economy = projectYearBudgetsMap.put(project.getUUID(), new ProjectYearEconomy(project.getUUID(), project.getName()));
-                                        economy.getActual()[work.getMonth()] += work.getWorkDuration() * taskWorkerConstraint.getPrice();
+                                        ProjectYearEconomy economy = new ProjectYearEconomy(project.getUUID(), project.getName());
+                                        projectYearBudgetsMap.put(project.getUUID(), economy);
+                                        System.out.println("economy = " + economy);
+                                        System.out.println("taskWorkerConstraint = " + taskWorkerConstraint);
+                                        System.out.println("work = " + work);
+                                        economy.getActual()[month] += work.getWorkDuration() * taskWorkerConstraint.getPrice();
                                     }
                                 }
                             }

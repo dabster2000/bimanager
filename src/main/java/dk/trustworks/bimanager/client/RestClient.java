@@ -73,7 +73,7 @@ public class RestClient {
         return 0.0;
     }
 
-    public List<Work> getRegisteredWorkByMonth(int month, int year) {
+    public List<Work> getRegisteredWorkByMonth(int year, int month) {
         log.entry(month, year);
         try {
             HttpResponse<JsonNode> jsonResponse = Unirest.get(Locator.getInstance().resolveURL("timeservice") + "/api/works/search/findByYearAndMonth")
