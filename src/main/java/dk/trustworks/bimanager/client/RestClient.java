@@ -82,9 +82,9 @@ public class RestClient {
                     .header("accept", "application/json")
                     .asJson();
             ObjectMapper mapper = new ObjectMapper();
-            List<Work> result = mapper.readValue(jsonResponse.getRawBody(), new TypeReference<List<Work>>() {
-            });
+            List<Work> result = mapper.readValue(jsonResponse.getRawBody(), new TypeReference<List<Work>>() {});
             log.exit(result);
+            log.debug("result: "+result.size());
             return result;
         } catch (UnirestException | IOException e) {
             log.catching(e);

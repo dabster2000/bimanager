@@ -94,6 +94,56 @@ public class ProjectBudgetService extends DefaultLocalService {
         return null;
     }
 
+    public List<ProjectYearEconomy> findByYearAndMonth(Map<String, Deque<String>> queryParameters) {
+        log.debug("ProjectBudgetService.findByYearAndMonth");
+        log.debug("queryParameters = [" + queryParameters + "]");
+        long allTimer = System.currentTimeMillis();
+        int year = Integer.parseInt(queryParameters.get("year").getFirst());
+        int month = Integer.parseInt(queryParameters.get("month").getFirst());
+        try {
+            RestClient restClient = new RestClient();
+            List<Project> projects = restClient.getProjectsAndTasksAndTaskWorkerConstraints();
+
+            Map<String, ProjectYearEconomy> projectYearBudgetsMap = new HashMap<>();
+
+            long allWorkTimer = System.currentTimeMillis();
+            List<Work> allWork = restClient.getRegisteredWorkByMonth(year, month - 2);
+            log.debug("Load all work: {}", (System.currentTimeMillis() - allWorkTimer));
+            log.debug("Work found: "+allWork.size());
+
+            for (Work work : allWork) {
+                for (Project project : projects) {
+                    for (Task task : project.getTasks()) {
+                        if (work.getTaskUUID().equals(task.getUUID())) {
+                            for (TaskWorkerConstraint taskWorkerConstraint : task.getTaskWorkerConstraints()) {
+                                if (work.getUserUUID().equals(taskWorkerConstraint.getUserUUID())) {
+                                    if(projectYearBudgetsMap.containsKey(project.getUUID())) {
+                                        log.debug("project: {}", project);
+                                        projectYearBudgetsMap.get(project.getUUID()).getActual()[work.getMonth()] += work.getWorkDuration() * taskWorkerConstraint.getPrice();
+                                        log.debug("budget: {}", projectYearBudgetsMap.get(project.getUUID()));
+                                    } else {
+                                        log.debug("new project: {}", project);
+                                        ProjectYearEconomy economy = projectYearBudgetsMap.put(project.getUUID(), new ProjectYearEconomy(project.getUUID(), project.getName()));
+                                        economy.getActual()[work.getMonth()] += work.getWorkDuration() * taskWorkerConstraint.getPrice();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            log.debug("Load all: {}", (System.currentTimeMillis() - allTimer));
+            log.debug("size: "+projectYearBudgetsMap.values().size());
+            ArrayList<ProjectYearEconomy> result = new ArrayList<>();
+            result.addAll(projectYearBudgetsMap.values());
+            return result;
+        } catch (Exception e) {
+            log.error("LOG00840:", e);
+        }
+        return null;
+    }
+
     public List<ProjectYearEconomy> findByUserAndYear(Map<String, Deque<String>> queryParameters) {
         log.debug("ProjectBudgetService.findByUserAndYear");
         log.debug("queryParameters = [" + queryParameters + "]");
