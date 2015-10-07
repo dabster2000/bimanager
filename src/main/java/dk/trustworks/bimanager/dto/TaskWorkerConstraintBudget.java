@@ -3,11 +3,15 @@ package dk.trustworks.bimanager.dto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.io.Serializable;
+
 /**
  * Created by hans on 12/05/15.
  */
 @JsonIgnoreProperties({"created"})
-public class TaskWorkerConstraintBudget {
+public class TaskWorkerConstraintBudget implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private String uuid;
 

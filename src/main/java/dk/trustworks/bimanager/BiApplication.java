@@ -1,12 +1,18 @@
 package dk.trustworks.bimanager;
 
+import com.vaadin.server.VaadinServlet;
 import dk.trustworks.bimanager.handler.ProjectBudgetHandler;
 import dk.trustworks.bimanager.handler.ReportHandler;
 import dk.trustworks.bimanager.handler.TaskBudgetHandler;
+import dk.trustworks.bimanager.jobs.WorkItemMonthlyJob;
+import dk.trustworks.bimanager.jobs.enums.Event;
 import dk.trustworks.framework.persistence.Helper;
 import io.undertow.Handlers;
 import io.undertow.Undertow;
 import io.undertow.UndertowOptions;
+import io.undertow.servlet.Servlets;
+import io.undertow.servlet.api.DeploymentInfo;
+import io.undertow.servlet.api.DeploymentManager;
 import io.undertow.util.Headers;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
@@ -16,10 +22,19 @@ import org.apache.curator.x.discovery.ServiceInstance;
 import org.apache.curator.x.discovery.UriSpec;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.quartz.JobDetail;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.Trigger;
+import org.quartz.impl.StdSchedulerFactory;
 import org.xnio.Options;
 
 import java.io.InputStream;
 import java.util.Properties;
+
+import static org.quartz.CronScheduleBuilder.cronSchedule;
+import static org.quartz.JobBuilder.newJob;
+import static org.quartz.TriggerBuilder.newTrigger;
 
 /**
  * Created by hans on 16/03/15.
@@ -39,6 +54,19 @@ public class BiApplication {
             properties.load(in);
         }
 
+        DeploymentInfo servletBuilder = Servlets.deployment()
+                .setClassLoader(BiApplication.class.getClassLoader())
+                .setContextPath("/admin")
+                .setDeploymentName("admin.war")
+                .addServlets(
+                        Servlets.servlet("adminServlet", VaadinServlet.class)
+                                .addInitParam("UI", "dk.trustworks.bimanager.web.DashboardUI")
+                                .addInitParam("widgetset", "dk.trustworks.bimanager.web.DashboardWidgetSet")
+                                .addMapping("/*"));
+
+        DeploymentManager manager = Servlets.defaultContainer().addDeployment(servletBuilder);
+        manager.deploy();
+
         Undertow.builder()
                 .addHttpListener(port, properties.getProperty("web.host"))
                 .setBufferSize(1024 * 16)
@@ -50,12 +78,46 @@ public class BiApplication {
                         .addPrefixPath("/api/projectbudgets", new ProjectBudgetHandler())
                         .addPrefixPath("/api/taskbudgets", new TaskBudgetHandler())
                         .addPrefixPath("/api/reports", new ReportHandler())
+                        .addPrefixPath("/admin", manager.start())
                         , Headers.SERVER_STRING, "U-tow"))
                         .setWorkerThreads(200)
                         .build()
                         .start();
 
         registerInZookeeper(properties.getProperty("zookeeper.host"), port);
+
+        //startSchedulers();
+    }
+
+    private final void startSchedulers() throws SchedulerException {
+        Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
+        JobDetail workItemRebaseJob = newJob(WorkItemMonthlyJob.class)
+                .withIdentity("WorkItemRebaseJob", "BiManagerJobs")
+                .usingJobData("event", Event.HISTORIC.name())
+                .build();
+
+        Trigger monthlyTrigger = newTrigger()
+                .withIdentity("MonthlyTrigger", "BiManagerTriggers")
+                //.withSchedule(cronSchedule("0 0 10am 1 * ?"))
+                .withSchedule(cronSchedule("1 * * * * ?"))
+                .build();
+
+        scheduler.scheduleJob(workItemRebaseJob, monthlyTrigger);
+
+        JobDetail workItemCurrentMonthJob = newJob(WorkItemMonthlyJob.class)
+                .withIdentity("WorkItemCurrentMonthJob", "BiManagerJobs")
+                .usingJobData("event", Event.CURRENTMONTH.name())
+                .build();
+
+        Trigger dailyTrigger = newTrigger()
+                .withIdentity("DailyTrigger", "BiManagerTriggers")
+                //.withSchedule(cronSchedule("0 0 6 ? * *"))
+                .withSchedule(cronSchedule("0/20 * * * * ?"))
+                .build();
+
+        scheduler.scheduleJob(workItemCurrentMonthJob, dailyTrigger);
+
+        scheduler.start();
     }
 
     private static void registerInZookeeper(String zooHost, int port) throws Exception {

@@ -63,7 +63,7 @@ public class ProjectYearEconomy {
 
     @Override
     public String toString() {
-        return "ProjectYearEconomy{" +
+        return "economyByMonth{" +
                 "actual=" + Arrays.toString(actual) +
                 ", projectUUID='" + projectUUID + '\'' +
                 ", projectName='" + projectName + '\'' +

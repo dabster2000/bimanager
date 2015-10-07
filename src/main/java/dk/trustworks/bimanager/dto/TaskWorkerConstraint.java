@@ -3,7 +3,11 @@ package dk.trustworks.bimanager.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class TaskWorkerConstraint {
+import java.io.Serializable;
+
+public class TaskWorkerConstraint implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @JsonProperty("uuid")
     private String UUID;

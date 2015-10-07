@@ -237,7 +237,7 @@ public class RestClient {
             return projectBudgets;
         } catch (Exception e) {
             log.throwing(e);
-            throw new RuntimeException("Kunne ikke loade: ProjectYearEconomy", e);
+            throw new RuntimeException("Kunne ikke loade: economyByMonth", e);
         }
     }
 
@@ -256,7 +256,7 @@ public class RestClient {
             return projectBudgets;
         } catch (Exception e) {
             log.throwing(e);
-            throw new RuntimeException("Kunne ikke loade: ProjectYearEconomy", e);
+            throw new RuntimeException("Kunne ikke loade: economyByMonth", e);
         }
     }
 
@@ -275,7 +275,7 @@ public class RestClient {
             return projectBudgets;
         } catch (Exception e) {
             log.throwing(e);
-            throw new RuntimeException("Kunne ikke loade: ProjectYearEconomy", e);
+            throw new RuntimeException("Kunne ikke loade: economyByMonth", e);
         }
     }
 

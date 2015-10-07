@@ -1,11 +1,15 @@
 package dk.trustworks.bimanager.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Budget {
 
     private String name;
 
+    @JsonProperty("remainingbudget")
     private double remainingBudget;
-    
+
+    @JsonProperty("usedbudget")
     private double usedBudget;
 
     private double budget;

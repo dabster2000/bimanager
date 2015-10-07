@@ -6,13 +6,16 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 //@JsonIgnoreProperties(ignoreUnknown = true)
-public class Project {
+public class Project implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @JsonProperty("uuid")
 	private String UUID;

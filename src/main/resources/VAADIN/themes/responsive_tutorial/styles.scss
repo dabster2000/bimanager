@@ -1,0 +1,9 @@
+@import "addons.scss";
+@import "responsive_tutorial.scss";
+
+/* This file prefixes all rules with the theme name to avoid causing conflicts with other themes. */
+/* The actual styles should be defined in responsive_tutorial.scss */
+.responsive_tutorial {
+  @include addons;
+  @include responsive_tutorial;
+}

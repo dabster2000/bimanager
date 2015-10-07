@@ -2,10 +2,13 @@ package dk.trustworks.bimanager.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Task {
+public class Task implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @JsonProperty("uuid")
 	private String UUID;
