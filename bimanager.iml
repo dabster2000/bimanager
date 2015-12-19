@@ -45,21 +45,6 @@
     <orderEntry type="library" name="Maven: org.apache.curator:curator-x-discovery:2.7.1" level="project" />
     <orderEntry type="library" name="Maven: org.codehaus.jackson:jackson-mapper-asl:1.9.13" level="project" />
     <orderEntry type="library" name="Maven: org.codehaus.jackson:jackson-core-asl:1.9.13" level="project" />
-    <orderEntry type="library" name="Maven: com.vaadin:vaadin-server:7.4.3" level="project" />
-    <orderEntry type="library" name="Maven: com.vaadin:vaadin-sass-compiler:0.9.12" level="project" />
-    <orderEntry type="library" name="Maven: com.vaadin.external.flute:flute:1.3.0.gg2" level="project" />
-    <orderEntry type="library" name="Maven: com.vaadin:vaadin-shared:7.4.3" level="project" />
-    <orderEntry type="library" name="Maven: com.vaadin.external.streamhtmlparser:streamhtmlparser-jsilver:0.0.10.vaadin1" level="project" />
-    <orderEntry type="library" name="Maven: com.vaadin.external.google:guava:16.0.1.vaadin1" level="project" />
-    <orderEntry type="library" name="Maven: org.jsoup:jsoup:1.8.1" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.vaadin:vaadin-client:7.4.3" level="project" />
-    <orderEntry type="library" name="Maven: org.w3c.css:sac:1.3" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: javax.validation:validation-api:1.0.0.GA" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: javax.validation:validation-api:sources:1.0.0.GA" level="project" />
-    <orderEntry type="library" name="Maven: com.vaadin:vaadin-client-compiled:7.4.3" level="project" />
-    <orderEntry type="library" name="Maven: com.vaadin:vaadin-themes:7.4.3" level="project" />
-    <orderEntry type="library" name="Maven: com.vaadin.addon:vaadin-charts:3.0.0-alpha6" level="project" />
-    <orderEntry type="library" name="Maven: commons-io:commons-io:1.4" level="project" />
     <orderEntry type="module" module-name="trustworks-framework" />
     <orderEntry type="library" name="Maven: com.zaxxer:HikariCP:2.3.8" level="project" />
     <orderEntry type="library" name="Maven: org.javassist:javassist:3.18.2-GA" level="project" />
