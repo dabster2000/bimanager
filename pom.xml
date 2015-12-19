@@ -55,32 +55,6 @@
             <version>2.7.1</version>
         </dependency>
         <dependency>
-            <groupId>com.vaadin</groupId>
-            <artifactId>vaadin-server</artifactId>
-            <version>${vaadin.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.vaadin</groupId>
-            <artifactId>vaadin-client</artifactId>
-            <version>${vaadin.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.vaadin</groupId>
-            <artifactId>vaadin-client-compiled</artifactId>
-            <version>${vaadin.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.vaadin</groupId>
-            <artifactId>vaadin-themes</artifactId>
-            <version>${vaadin.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.vaadin.addon</groupId>
-            <artifactId>vaadin-charts</artifactId>
-            <version>3.0.0-alpha6</version>
-        </dependency>
-        <dependency>
             <groupId>dk.trustworks</groupId>
             <artifactId>trustworks-framework</artifactId>
             <version>0.1-SNAPSHOT</version>
@@ -137,8 +111,6 @@
         <start-class>dk.trustworks.bimanager.BiApplication</start-class>
         <java.version>1.8</java.version>
         <jackson.version>2.4.5</jackson.version>
-        <vaadin.version>7.4.3</vaadin.version>
-        <vaadin.plugin.version>${vaadin.version}</vaadin.plugin.version>
     </properties>
 
     <profiles>
@@ -212,50 +184,6 @@
                         <phase>package</phase> <!-- bind to the packaging phase -->
                         <goals>
                             <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>com.vaadin</groupId>
-                <artifactId>vaadin-maven-plugin</artifactId>
-                <version>${vaadin.plugin.version}</version>
-                <configuration>
-                    <extraJvmArgs>-Xmx512M -Xss1024k</extraJvmArgs>
-                    <!-- <runTarget>mobilemail</runTarget> -->
-                    <!-- We are doing "inplace" but into subdir VAADIN/widgetsets. This
-                        way compatible with Vaadin eclipse plugin. -->
-                    <webappDirectory>${basedir}/src/main/resources/VAADIN/widgetsets
-                    </webappDirectory>
-                    <hostedWebapp>${basedir}/src/main/resources/VAADIN/widgetsets
-                    </hostedWebapp>
-                    <!-- Most Vaadin apps don't need this stuff, guide that to target -->
-                    <persistentunitcachedir>${project.build.directory}</persistentunitcachedir>
-                    <deploy>${project.build.directory}/gwt-deploy</deploy>
-                    <!-- Compile report is not typically needed either, saves hunreds of mb disk -->
-                    <compileReport>false</compileReport>
-                    <noServer>true</noServer>
-                    <!-- Remove draftCompile when project is ready -->
-                    <draftCompile>false</draftCompile>
-
-                    <style>OBF</style>
-                    <strict>true</strict>
-                    <runTarget>http://localhost:8080/</runTarget>
-                </configuration>
-                <executions>
-                    <execution>
-                        <configuration>
-                            <!-- if you don't specify any modules, the plugin will find them -->
-                            <!-- <modules> <module>com.vaadin.demo.mobilemail.gwt.ColorPickerWidgetSet</module>
-                                </modules> -->
-                        </configuration>
-                        <goals>
-                            <goal>clean</goal>
-                            <goal>resources</goal>
-                            <goal>update-theme</goal>
-                            <goal>update-widgetset</goal>
-                            <goal>compile-theme</goal>
-                            <goal>compile</goal>
                         </goals>
                     </execution>
                 </executions>

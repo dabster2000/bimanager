@@ -3,7 +3,6 @@ package dk.trustworks.bimanager.web;
 import com.vaadin.annotations.Theme;
 import com.vaadin.server.Responsive;
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.ui.*;
 import dk.trustworks.bimanager.web.widgets.ClientRevenueStatus;
 
 /**

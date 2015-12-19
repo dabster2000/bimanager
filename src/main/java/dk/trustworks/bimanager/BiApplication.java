@@ -1,6 +1,5 @@
 package dk.trustworks.bimanager;
 
-import com.vaadin.server.VaadinServlet;
 import dk.trustworks.bimanager.handler.ProjectBudgetHandler;
 import dk.trustworks.bimanager.handler.ReportHandler;
 import dk.trustworks.bimanager.handler.TaskBudgetHandler;
@@ -10,9 +9,6 @@ import dk.trustworks.framework.persistence.Helper;
 import io.undertow.Handlers;
 import io.undertow.Undertow;
 import io.undertow.UndertowOptions;
-import io.undertow.servlet.Servlets;
-import io.undertow.servlet.api.DeploymentInfo;
-import io.undertow.servlet.api.DeploymentManager;
 import io.undertow.util.Headers;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
@@ -54,18 +50,6 @@ public class BiApplication {
             properties.load(in);
         }
 
-        DeploymentInfo servletBuilder = Servlets.deployment()
-                .setClassLoader(BiApplication.class.getClassLoader())
-                .setContextPath("/admin")
-                .setDeploymentName("admin.war")
-                .addServlets(
-                        Servlets.servlet("adminServlet", VaadinServlet.class)
-                                .addInitParam("UI", "dk.trustworks.bimanager.web.DashboardUI")
-                                .addInitParam("widgetset", "dk.trustworks.bimanager.web.DashboardWidgetSet")
-                                .addMapping("/*"));
-
-        DeploymentManager manager = Servlets.defaultContainer().addDeployment(servletBuilder);
-        manager.deploy();
 
         Undertow.builder()
                 .addHttpListener(port, properties.getProperty("web.host"))
@@ -78,7 +62,6 @@ public class BiApplication {
                         .addPrefixPath("/api/projectbudgets", new ProjectBudgetHandler())
                         .addPrefixPath("/api/taskbudgets", new TaskBudgetHandler())
                         .addPrefixPath("/api/reports", new ReportHandler())
-                        .addPrefixPath("/admin", manager.start())
                         , Headers.SERVER_STRING, "U-tow"))
                         .setWorkerThreads(200)
                         .build()

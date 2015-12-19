@@ -1,7 +1,6 @@
 package dk.trustworks.bimanager.web.widgets;
 
 import com.vaadin.addon.charts.Chart;
-import com.vaadin.addon.charts.model.*;
 import dk.trustworks.bimanager.client.RestClient;
 import dk.trustworks.bimanager.dto.ProjectYearEconomy;
 import dk.trustworks.bimanager.dto.User;
